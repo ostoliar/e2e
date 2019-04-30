@@ -2,6 +2,9 @@
 
 import constants from '../common/constants';
 import loginPage from '../common/pageObjects/loginPage';
+import userMenu from '../common/pageObjects/userMenu';
+
+const EMAIL = 'o.stoliar3@gmail.com';
 
 describe('login:', () => {
     before(() => {
@@ -17,19 +20,14 @@ describe('login:', () => {
     });
 
     it('requires password', () => {
-        loginPage.emailInput.type('o.stoliar3@gmail.com');
+        loginPage.emailInput.type(EMAIL);
         assertWontLogin();
     });
 
     describe('valid username and password', () => {
-        beforeEach(() => {
-            loginPage.emailInput.clear();
-            loginPage.passwordInput.clear();
-        });
-
         it('requires valid username and password', () => {
-            loginPage.emailInput.type('o.stoliar3@gmail.com');
-            loginPage.passwordInput.type('invalid{enter}');
+            loginPage.emailInput.clear().type(EMAIL);
+            loginPage.passwordInput.clear().type('invalid{enter}');
             loginPage.loginButton.click();
             cy.get('body .react-tiny-popover-container')
                 .should('contain', 'E-mail and password combination does not exist', { timeout: 2000 });
@@ -39,28 +37,17 @@ describe('login:', () => {
 
     describe('check valid email combination', () => {
         it('requires valid email', () => {
-            cy.window().then((win) => {
-                win.location.hash = '#/signup';
-            });
-
-            cy.wait(200);
-
-            cy.window().then((win) => {
-                win.location.hash = '#/login';
-            });
-
-            cy.wait(200);
-            cy.get('input[type=email]').type('o.stoliar3gmail.com');
-            cy.get('input[type=password]').click()
-            cy.hash().should('eq', '#/login');
+            resetPageState();
+            loginPage.emailInput.type(EMAIL);
+            assertWontLogin();
         });
     });
 
 
     describe('succesfull login', () => {
         it('navigates to #/ on succesfull login', () => {
-            cy.get('input[type=email]').clear().type('o.stoliar3@gmail.com');
-            cy.get('input[type=password]').type('easy123{enter}');
+            loginPage.emailInput.clear().type(EMAIL);
+            loginPage.passwordInput.type('easy123{enter}');
             cy.wait(2000);
             cy.hash().should('eq', '#/');
             cy.wait(5000);
@@ -69,9 +56,9 @@ describe('login:', () => {
 
     describe('logout', () => {
         it('logout from the course', () => {
-            cy.get('#root > div:first-child > div:first-child > div:first-child > button').click();
+            userMenu.logout();
             cy.wait(200);
-            cy.get('body .react-tiny-popover-container button').contains('Logout').click();
+            cy.hash().should('eq', constants.nav.login);
         });
     });
 });
@@ -79,4 +66,18 @@ describe('login:', () => {
 function assertWontLogin() {
     loginPage.loginButton.click();
     cy.hash().should('eq', constants.nav.login);
+}
+
+function resetPageState() {
+    cy.window().then((win) => {
+        win.location.hash = constants.nav.signup;
+    });
+
+    cy.wait(200);
+
+    cy.window().then((win) => {
+        win.location.hash = constants.nav.login;
+    });
+
+    cy.wait(200);
 }

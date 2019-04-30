@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
 
+import constants from '../common/constants';
+
 describe('sign up', () => {
     before(() => {
         cy.ensurePageLoaded('/signup');
