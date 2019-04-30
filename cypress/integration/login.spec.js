@@ -34,7 +34,6 @@ describe('login:', () => {
         });
     });
 
-
     describe('check valid email combination', () => {
         it('requires valid email', () => {
             resetPageState();
@@ -42,7 +41,6 @@ describe('login:', () => {
             assertWontLogin();
         });
     });
-
 
     describe('succesfull login', () => {
         it('navigates to #/ on succesfull login', () => {
@@ -61,6 +59,13 @@ describe('login:', () => {
             cy.hash().should('eq', constants.nav.login);
         });
     });
+
+    describe('when skip login', () => {
+        it('should login anonymously', () => {
+            loginPage.skipButton.click();
+            cy.hash().should('eq', constants.nav.index);
+        });
+    });
 });
 
 function assertWontLogin() {
@@ -69,15 +74,6 @@ function assertWontLogin() {
 }
 
 function resetPageState() {
-    cy.window().then((win) => {
-        win.location.hash = constants.nav.signup;
-    });
-
-    cy.wait(200);
-
-    cy.window().then((win) => {
-        win.location.hash = constants.nav.login;
-    });
-
-    cy.wait(200);
+    cy.setLocationHash(constants.nav.signup);
+    cy.setLocationHash(constants.nav.login);
 }

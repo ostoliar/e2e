@@ -28,7 +28,7 @@
 
 import constants from '../common/constants';
 
-export function ensurePageLoaded(url = constants.nav.index) {
+function ensurePageLoaded(url = constants.nav.index) {
     cy.hash()
         .then(hash => {
             if (hash === url) {
@@ -37,7 +37,7 @@ export function ensurePageLoaded(url = constants.nav.index) {
 
             if (hash.length === 0) {
                 cy.visit('/');
-                cy.contains('Welcome', { timeout: 1000000 });
+                cy.get('aside[data-sidebar=true]', { timeout: 1000000 });
             }
         })
         .window()
@@ -50,4 +50,13 @@ export function ensurePageLoaded(url = constants.nav.index) {
         });
 }
 
+function setLocationHash(hash) {
+    cy.window().then((win) => {
+        win.location.hash = hash;
+    });
+
+    cy.wait(200);
+}
+
 Cypress.Commands.add("ensurePageLoaded", ensurePageLoaded);
+Cypress.Commands.add("setLocationHash", setLocationHash);

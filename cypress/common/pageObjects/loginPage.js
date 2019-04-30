@@ -14,6 +14,10 @@ class LoginPage {
     get passwordInput() {
         return cy.get('input[type=password]');
     }
+
+    get skipButton() {
+        return cy.get('a').contains('Skip step, start anonymously');
+    }
 }
 
 export default new LoginPage();

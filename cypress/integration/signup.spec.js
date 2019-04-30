@@ -1,6 +1,13 @@
 /// <reference types="Cypress" />
 
 import constants from '../common/constants';
+import signupPage from '../common/pageObjects/signupPage';
+import loginPage from '../common/pageObjects/loginPage';
+
+
+const EMAIL = 'o.stoliar3@gmail.com';
+const INVALID_PASSWORD = 'o.stoliar@gmail.com'
+const INVALID_EMAIL = 'o.stoliargmail.com'
 
 describe('sign up', () => {
     before(() => {
@@ -8,30 +15,116 @@ describe('sign up', () => {
     });
 
     it('greets with sign up', () => {
-        cy
-            .wait(10000)
-            .contains('Create Account');
+        signupPage.title.should('have.text', 'Create Account');
     });
 
-    it('contains name, email, password', () => {
-        cy.get('form').should('contain', 'Name', 'Email', 'Password');
-
-    });
+    // it('contains name, email, password', () => {
+    //     cy.get('form').should('contain', 'Name', 'Email', 'Password');
+    // });
 
     it('requires email', () => {
-        cy.get('form').contains('Email').click();
-        cy.hash().should('eq', '#/signup');
+        // cy.get('form').contains('Email');
+        assertWontSignup();
     });
 
     it('requires name, password', () => {
-        cy.get('input[type=email]').type('o.stoliar3@gmail.com').click();
-        cy.hash().should('eq', '#/signup');
-        cy.get('input[type=email]').clear();
-        cy.window().then((win) => {
-            win.location.hash = '#/login';
+        signupPage.emailInput.type('EMAIL');
+        assertWontSignup();
+        // signupPage.emailInput.clear();
+        // cy.window().then((win) => {
+        //     win.location.hash = constants.nav.login;
+        // });
+    });
+});
+
+describe('when name is emty', () => {
+    beforeEach(() => {
+        signupPage.nameImput.clear();
+    });
+
+    describe('and email is empty', () => {
+        beforeEach(() => {
+            signupPage.emailInput.clear();
+        });
+    })
+
+    describe('and password is empty', () => {
+        beforeEach(() => {
+            signupPage.passwordInput.clear();
+        });
+        it('should not sign up', () => {
+            assertWontSignup();
+        })
+    });
+
+    describe('password is not empty', () => {
+        beforeEach(() => {
+            signupPage.passwordInput.type(INVALID_PASSWORD);
+        });
+
+        it('should not signup', () => {
+            assertWontSignup();
         });
     });
 });
+
+describe('when name is emty', () => {
+    beforeEach(() => {
+        signupPage.nameImput.clear();
+    });
+
+    describe('and email is empty', () => {
+        beforeEach(() => {
+            signupPage.emailInput.clear();
+        });
+    });
+    describe('password is not empty', () => {
+        beforeEach(() => {
+            signupPage.passwordInput.type(INVALID_PASSWORD);
+        });
+    });
+
+
+    it('should not sign up', () => {
+        assertWontSignup();
+    });
+});
+
+describe('when email is invalid', () => {
+    beforeEach(() => {
+        signupPage.passwordInput.type(INVALID_PASSWORD);
+    });
+
+    describe('and email is not contain @', () => {
+        beforeEach(() => {
+            signupPage.emailInput.type(INVALID_EMAIL);
+        });
+    })
+
+    it('should not sign up', () => {
+        assertWontSignup();
+    });
+
+    describe('and email does not contain domain', () => {
+        beforeEach(() => {
+            signupPage.emailInput.type('o.stoliar3@gmail');
+        });
+        it('should not sign up', () => {
+            assertWontSignup();
+        });
+    });
+
+});
+
+
+
+
+
+function assertWontSignup() {
+    signupPage.signUpButton.click();
+    cy.hash().should('eq', constants.nav.signup);
+}
+
 
 
 
