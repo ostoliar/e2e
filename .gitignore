@@ -1,3 +1,1 @@
 node_modules/
-cypress/integration/*.js
-cypress/support/*.js
