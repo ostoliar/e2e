@@ -58,5 +58,9 @@ function setLocationHash(hash) {
     cy.wait(200);
 }
 
+Cypress.on("window:before:load", win => {
+    win.fetch = null;
+});
+
 Cypress.Commands.add("ensurePageLoaded", ensurePageLoaded);
 Cypress.Commands.add("setLocationHash", setLocationHash);
