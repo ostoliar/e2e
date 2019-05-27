@@ -13,7 +13,7 @@ const INVALID_EMAIL = 'o.stoliargmail.com';
 
 describe('sign up', () => {
     before(() => {
-        cy.ensurePageLoaded('/signup');
+        cy.ensurePageLoaded(constants.nav.signup);
     });
 
     it('greets with sign up', () => {

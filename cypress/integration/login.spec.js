@@ -63,9 +63,19 @@ describe('login:', () => {
     describe('when skip login', () => {
         it('should login anonymously', () => {
             loginPage.skipButton.click();
+            cy.wait(2000)
             cy.hash().should('eq', constants.nav.index);
         });
     });
+
+    describe('logout', () => {
+        it('logout from the course', () => {
+            userMenu.logout();
+            cy.wait(200);
+            cy.hash().should('eq', constants.nav.login);
+        });
+    });
+
 });
 
 function assertWontLogin() {
